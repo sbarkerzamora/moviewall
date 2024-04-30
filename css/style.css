@@ -1,0 +1,84 @@
+/* Tailwing Custom Theme START */
+
+.theme-custom {
+
+    /* CSS: .bg-gradient { background: var(--gradient) } */
+    --gradient: #00bf8f;
+
+    --background: 175 65% 3.04%;
+    --foreground: 175 10% 96.9%;
+
+    --muted: 175 50% 11.4%;
+    --muted-foreground: 175 10% 53.8%;
+
+    --popover: 175 45% 4.94%;
+    --popover-foreground: 175 10% 96.9%;
+
+    --card: 175 45% 4.94%;
+    --card-foreground: 175 10% 96.9%;
+
+    --border: 175 50% 11.4%;
+    --input: 175 50% 11.4%;
+
+    --primary: 175 100% 38%;
+    --primary-foreground: 175 10% 96.9%;
+
+    --secondary: 175 50% 11.4%;
+    --secondary-foreground: 175 10% 96.9%;
+
+    --accent: 175 50% 11.4%;
+    --accent-foreground: 175 10% 96.9%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 175 10% 96.9%;
+
+    --ring: 175 100% 38%;
+}
+
+/* Tailwing Custom Theme END */
+
+/* Home Grid Style*/
+
+/* Typo */
+
+h1 {
+    font-family: "Limelight", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+p {
+    font-size: 20px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container {
+    background-color: #00bf8f;
+    background-image: url("../img/home-img.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    width: 100%;
+    background-size: cover;
+    padding: 20px;
+}
+
+.grid {
+    background-color: transparent;
+}
+
+.home-title {
+    color: aliceblue;
+    text-align: center;
+    font-size: 40px;
+}
+
+.home-description {
+    color: aliceblue;
+    text-align: center;
+    font-size: 20px;
+    padding-bottom: 20px;
+}
+
