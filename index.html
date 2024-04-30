@@ -20,49 +20,104 @@
 
   <div class="container mx-auto px-4">
       <h1 class="text-3xl font-bold text-center my-8">Recomendaciones de Películas de la Semana</h1>
-      <p class="text-center mb-10">Aquí encontrarás una lista de películas populares actualizadas semanalmente.</p>
+      <p class="text-center mb-4">Selecciona una categoría para filtrar las películas:</p>
+      <select id="categorySelect" class="block mx-auto mb-10 p-2 rounded bg-white border border-gray-200">
+          <!-- Las opciones de categorías se cargarán aquí -->
+      </select>
       <div id="movies" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Aquí se insertarán las películas mediante JavaScript -->
       </div>
       <div class="flex justify-center mt-8">
-        <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Cargar más películas
-        </button>
-    </div>
+          <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Cargar más películas
+          </button>
+      </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
         let currentPage = 1;
-        const fetchMovies = (page) => {
-            fetch(`https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}`)
+        let currentGenre = '';
+    
+        const fetchGenres = () => {
+            fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES')
             .then(response => response.json())
             .then(data => {
+                const genres = data.genres;
+                const genreSelect = document.getElementById('categorySelect');
+                genreSelect.innerHTML = '<option value="">Todas las categorías</option>';
+                genres.forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre.id;
+                    option.textContent = genre.name;
+                    genreSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching genres:', error));
+        };
+    
+        const fetchMovies = (page, genre = '') => {
+            let url = `https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}`;
+            if (genre) {
+                url = `https://api.themoviedb.org/3/discover/movie?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}&with_genres=${genre}`;
+            }
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.results) {
+                    console.error('No data returned from the API');
+                    return;
+                }
                 const movies = data.results;
                 const moviesContainer = document.getElementById('movies');
+                if (page === 1) moviesContainer.innerHTML = '';
                 movies.forEach(movie => {
+                    const trimmedDescription = trimDescription(movie.overview);
                     const movieElement = `
                         <div class="custom-card shadow-lg rounded-lg">
-                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="rounded-t-lg">
-                            <div class="p-4">
+                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="movie-image rounded-t-lg">
+                            <div class="card-info p-4">
                                 <h3 class="home-card-title text-xl font-bold">${movie.title}</h3>
-                                <p class="home-card-description">${movie.overview}</p>
+                                <p class="home-card-description">${trimmedDescription}</p>
+                                <button id="loadMore" class="load-more bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                  <a href="https://www.themoviedb.org/movie/${movie.id}" target="_blank" class="text-white-500">Leer más</a>
+                                </button>
+                                <p class="font-bold">Puntuación: ${movie.vote_average}/10</p>
                             </div>
                         </div>
                     `;
                     moviesContainer.innerHTML += movieElement;
                 });
-            });
+            })
+            .catch(error => console.error('Error fetching movies:', error));
         };
+    
+        document.getElementById('categorySelect').addEventListener('change', (event) => {
+            currentGenre = event.target.value;
+            currentPage = 1;
+            fetchMovies(currentPage, currentGenre);
+        });
     
         document.getElementById('loadMore').addEventListener('click', () => {
             currentPage++;
-            fetchMovies(currentPage);
+            fetchMovies(currentPage, currentGenre);
         });
     
-        fetchMovies(currentPage);
+        fetchGenres();
+        fetchMovies(currentPage, currentGenre);
     });
+    
+    function trimDescription(description) {
+        const words = description.split(' ');
+        if (words.length > 35) {
+            return words.slice(0, 35).join(' ') + '...';
+        } else {
+            return description;
+        }
+    }
     </script>
+
+  
     
 
 </body>
