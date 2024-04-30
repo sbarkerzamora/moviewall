@@ -1,124 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Movie Wall</title>
-
-  <link rel="stylesheet" href="css/style.css">
-
   <script src="https://cdn.tailwindcss.com"></script>
-
-
+  <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
 </head>
 <body>
-
   <div class="container mx-auto px-4">
-      <h1 class="text-3xl font-bold text-center my-8">Recomendaciones de Películas de la Semana</h1>
-      <p class="text-center mb-4">Selecciona una categoría para filtrar las películas:</p>
-      <select id="categorySelect" class="block mx-auto mb-10 p-2 rounded bg-white border border-gray-200">
-          <!-- Las opciones de categorías se cargarán aquí -->
-      </select>
-      <div id="movies" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Aquí se insertarán las películas mediante JavaScript -->
-      </div>
-      <div class="flex justify-center mt-8">
-          <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Cargar más películas
-          </button>
-      </div>
+    <h1 class="text-3xl font-bold text-center my-8">Recomendaciones de Películas de la Semana</h1>
+    <p class="text-center mb-4">Selecciona una categoría para filtrar las películas:</p>
+    <select id="categorySelect" class="block mx-auto mb-10 p-2 rounded bg-white border border-gray-200">
+      <!-- Las opciones de categorías se cargarán aquí -->
+    </select>
+    <div id="movies" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Aquí se insertarán las películas mediante JavaScript -->
+    </div>
+    <div class="flex justify-center mt-8">
+      <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Cargar más películas
+      </button>
+    </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let currentPage = 1;
-        let currentGenre = '';
-    
-        const fetchGenres = () => {
-            fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES')
-            .then(response => response.json())
-            .then(data => {
-                const genres = data.genres;
-                const genreSelect = document.getElementById('categorySelect');
-                genreSelect.innerHTML = '<option value="">Todas las categorías</option>';
-                genres.forEach(genre => {
-                    const option = document.createElement('option');
-                    option.value = genre.id;
-                    option.textContent = genre.name;
-                    genreSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching genres:', error));
-        };
-    
-        const fetchMovies = (page, genre = '') => {
-            let url = `https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}`;
-            if (genre) {
-                url = `https://api.themoviedb.org/3/discover/movie?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}&with_genres=${genre}`;
-            }
-            fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (!data || !data.results) {
-                    console.error('No data returned from the API');
-                    return;
-                }
-                const movies = data.results;
-                const moviesContainer = document.getElementById('movies');
-                if (page === 1) moviesContainer.innerHTML = '';
-                movies.forEach(movie => {
-                    const trimmedDescription = trimDescription(movie.overview);
-                    const movieElement = `
-                        <div class="custom-card shadow-lg rounded-lg">
-                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="movie-image rounded-t-lg">
-                            <div class="card-info p-4">
-                                <h3 class="home-card-title text-xl font-bold">${movie.title}</h3>
-                                <p class="home-card-description">${trimmedDescription}</p>
-                                <button id="loadMore" class="load-more bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                  <a href="https://www.themoviedb.org/movie/${movie.id}" target="_blank" class="text-white-500">Leer más</a>
-                                </button>
-                                <p class="font-bold">Puntuación: ${movie.vote_average}/10</p>
-                            </div>
-                        </div>
-                    `;
-                    moviesContainer.innerHTML += movieElement;
-                });
-            })
-            .catch(error => console.error('Error fetching movies:', error));
-        };
-    
-        document.getElementById('categorySelect').addEventListener('change', (event) => {
-            currentGenre = event.target.value;
-            currentPage = 1;
-            fetchMovies(currentPage, currentGenre);
+  document.addEventListener('DOMContentLoaded', function() {
+    let currentPage = 1;
+    let currentGenre = '';
+    const fetchGenres = () => {
+      fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES')
+      .then(response => response.json())
+      .then(data => {
+        const genres = data.genres;
+        const genreSelect = document.getElementById('categorySelect');
+        genreSelect.innerHTML = '<option value="">Todas las categorías</option>';
+        genres.forEach(genre => {
+          const option = document.createElement('option');
+          option.value = genre.id;
+          option.textContent = genre.name;
+          genreSelect.appendChild(option);
         });
-    
-        document.getElementById('loadMore').addEventListener('click', () => {
-            currentPage++;
-            fetchMovies(currentPage, currentGenre);
-        });
-    
-        fetchGenres();
-        fetchMovies(currentPage, currentGenre);
-    });
-    
-    function trimDescription(description) {
-        const words = description.split(' ');
-        if (words.length > 35) {
-            return words.slice(0, 35).join(' ') + '...';
-        } else {
-            return description;
+      })
+      .catch(error => console.error('Error fetching genres:', error));
+    };
+
+    const fetchMovies = (page, genre = '') => {
+      let url = `https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}`;
+      if (genre) {
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}&with_genres=${genre}`;
+      }
+      fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (!data || !data.results) {
+          console.error('No data returned from the API');
+          return;
         }
+        const movies = data.results;
+        const moviesContainer = document.getElementById('movies');
+        if (page === 1) moviesContainer.innerHTML = '';
+        movies.forEach(movie => {
+          const trimmedDescription = trimDescription(movie.overview);
+          const movieElement = `
+            <div class="custom-card shadow-lg rounded-lg">
+              <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="movie-image rounded-t-lg">
+              <div class="card-info p-4 text-center">
+                <h3 class="home-card-title text-xl font-bold">${movie.title}</h3>
+                <p class="home-card-description">${trimmedDescription}</p>
+                <a href="https://www.themoviedb.org/movie/${movie.id}" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block mt-2">Leer más</a>
+                <p class="font-bold mt-2">Puntuación: ${movie.vote_average}/10</p>
+              </div>
+            </div>
+          `;
+          moviesContainer.innerHTML += movieElement;
+        });
+      })
+      .catch(error => console.error('Error fetching movies:', error));
+    };
+
+    document.getElementById('categorySelect').addEventListener('change', (event) => {
+      currentGenre = event.target.value;
+      currentPage = 1;
+      fetchMovies(currentPage, currentGenre);
+    });
+
+    document.getElementById('loadMore').addEventListener('click', () => {
+      currentPage++;
+      fetchMovies(currentPage, currentGenre);
+    });
+
+    fetchGenres();
+    fetchMovies(currentPage, currentGenre);
+  });
+
+  function trimDescription(description) {
+    const words = description.split(' ');
+    if (words.length > 35) {
+      return words.slice(0, 35).join(' ') + '...';
+    } else {
+      return description;
     }
-    </script>
-
-  
-    
-
+  }
+  </script>
 </body>
 </html>
