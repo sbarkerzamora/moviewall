@@ -24,29 +24,43 @@
       <div id="movies" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Aquí se insertarán las películas mediante JavaScript -->
       </div>
+      <div class="flex justify-center mt-8">
+        <button id="loadMore" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Cargar más películas
+        </button>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=1')
-        .then(response => response.json())
-        .then(data => {
-            const movies = data.results;
-            const moviesContainer = document.getElementById('movies');
-            moviesContainer.innerHTML = '';
-            movies.forEach(movie => {
-                const movieElement = `
-                    <div class="custom-card shadow-lg rounded-lg">
-                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="rounded-t-lg">
-                        <div class="p-4 custom-card-content">
-                            <h3 class="text-xl font-bold home-title">${movie.title}</h3>
-                            <p class="home-description"> ${movie.overview}</p>
+        let currentPage = 1;
+        const fetchMovies = (page) => {
+            fetch(`https://api.themoviedb.org/3/movie/popular?api_key=f834ff9c2d91964873cf1563de23d64d&language=es-ES&page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                const movies = data.results;
+                const moviesContainer = document.getElementById('movies');
+                movies.forEach(movie => {
+                    const movieElement = `
+                        <div class="custom-card shadow-lg rounded-lg">
+                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" class="rounded-t-lg">
+                            <div class="p-4">
+                                <h3 class="home-card-title text-xl font-bold">${movie.title}</h3>
+                                <p class="home-card-description">${movie.overview}</p>
+                            </div>
                         </div>
-                    </div>
-                `;
-                moviesContainer.innerHTML += movieElement;
+                    `;
+                    moviesContainer.innerHTML += movieElement;
+                });
             });
+        };
+    
+        document.getElementById('loadMore').addEventListener('click', () => {
+            currentPage++;
+            fetchMovies(currentPage);
         });
+    
+        fetchMovies(currentPage);
     });
     </script>
     

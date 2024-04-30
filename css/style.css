@@ -79,13 +79,13 @@ p {
 
 
 
-.home-title {
+.home-card-title {
     color: aliceblue;
     text-align: center;
     font-size: 24px;
 }
 
-.home-description {
+.home-card-description {
     color: aliceblue;
     text-align: center;
     font-size: 16px;
